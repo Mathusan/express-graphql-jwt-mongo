@@ -16,7 +16,7 @@ export const  createUser  = async ({name,email,password} : IUserInputs) =>{
             return userResult
 
 
-        } catch (error) {
+        } catch (error: any) {
             return error
         }
     }
@@ -25,8 +25,8 @@ export const  createUser  = async ({name,email,password} : IUserInputs) =>{
         try {
             const existingUser = await userModel.findOne({email : email})
             return existingUser
-        } catch (error) {
-            
+        } catch (error : any) {
+            return error
         }
     }
 
@@ -34,18 +34,19 @@ export const findUserByToken = async (refreshToken : any)   =>{
     try {
         const existingUser = await userModel.findOne({refreshToken:refreshToken})
         return existingUser
-    } catch (error) {
-        
+    } catch (error: any) {
+        return error
     }
 } 
 
 export const saveRefreshToken =async (userID: string , refreshToken :string) => {
-    
-    const user = await userModel.findById(userID).findOneAndUpdate({refreshToken:refreshToken})
+    try {
+        const user = await userModel.findById(userID).findOneAndUpdate({refreshToken:refreshToken})
+        const result = await user?.save();
+    } catch (error:any) {
+        return error
+    }
 
-    const result = await user?.save();
-
-    
 
 }
 
@@ -69,8 +70,6 @@ export const removeRefreshToken =async (refreshToken : string) => {
             user.refreshToken = ''
             const result = await user.save();
         }
-
-        
 
     } catch (error) {
         

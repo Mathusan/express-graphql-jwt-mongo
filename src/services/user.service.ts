@@ -73,8 +73,12 @@ export const logIn = async (userInputs : LoginInputs) =>{
 }
 
 export const logout =async (refreshToken : string) => {
+    try {
+        await removeRefreshToken(refreshToken)
+    } catch (error :any) {
+        throw new Error(error.message)
+    }
     
-    await removeRefreshToken(refreshToken)
 
 }
 

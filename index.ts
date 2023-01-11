@@ -5,6 +5,8 @@ import cors from 'cors';
 import bodyparser from 'body-parser';
 import cookieParser from 'cookie-parser'
 
+import { corsOptions } from './config/corsOptions';
+
 import connection from './database/connection';
 import { credentials } from './src/api/middlewares/credentials';
 
@@ -19,6 +21,7 @@ connection();
 
 app.use(credentials);
 app.use(cors());
+// app.use(cors(corsOptions));
 app.use(express.json());
 app.use((bodyparser.urlencoded({extended: true})));
 app.use(cookieParser());

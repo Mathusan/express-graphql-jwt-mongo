@@ -68,18 +68,21 @@ export const resolver = {
     },
 
     logout :async ({}, context:any) => {
-        const cookies = context.req.cookies;
-        if (!cookies?.jwt) return context.res.sendStatus(204); 
-        const refreshToken = cookies.jwt;
-    
-        const findUser = logout(refreshToken)
-        if (!findUser) {
-            context.res.clearCookie('jwt', { httpOnly: true, sameSite: 'strict', secure: true });
-            return context.res.sendStatus(204);
-        }   
+        try {
+            const cookies = context.req.cookies;
+            if (!cookies?.jwt) return context.res.sendStatus(204); 
+            const refreshToken = cookies.jwt;
         
-        context.res.clearCookie('jwt', { httpOnly: true, sameSite: 'strict', secure: true });
-        return context.res.sendStatus(204);
+            await logout(refreshToken)
+            context.res.clearCookie('jwt', { httpOnly: true, sameSite: 'strict', secure: true });
+            context.res.status(204);
+            return
+
+        } catch (error:any) {
+            throw new Error(error.message)
+        }
+
+        
     },
 
     privateroute:async ({}, context:any) => {
@@ -102,10 +105,9 @@ export const resolver = {
             }
 
     
-        } catch (error) {
-            context.res.status(403).json({
-                error : error
-            })
+        } catch (error : any) {
+            context.res.status(403)
+            throw new Error(error.message)
         }
     }
 
